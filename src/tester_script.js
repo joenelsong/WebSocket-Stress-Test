@@ -1,12 +1,21 @@
+/**
+ * Main Method to be called on Window load
+ */
 function main() {
 	var support = detectWebSockets();
 	if(!support){
 		return false;
 	}
-	makeWebSocketConnections();
+	makeWebSocketConnections(1000, "x.x.x.x");
 }
+
+/**
+ * Checks for WebSocket support 
+ * Has side-effects of updating DOM with result
+ * @returns {Boolean} success of WebSocket check
+ */
 function detectWebSockets() {
-	if( typeof(WebSocket) == "function" ) {
+	if( WebSocket !== "undefined" && typeof(WebSocket) == "function" ) {
 		document.getElementById("WebSocketSupport").innerHTML = "Support Confirmed";
 		return true;
 	}else{
@@ -15,9 +24,14 @@ function detectWebSockets() {
 	}
 }
 
-function makeWebSocketConnections() {
-	var numberOfConnections = 1000;
-	var ipAddress = "x.x.x.x";
+/**
+ * Creates designated number of connections with designated IP Address
+ * Has side-effects of updating DOM with result
+ * @param {Number} numberOfConnections
+ * @param {String} ipAddress
+ * @returns {Boolean} success of WebSocket connection
+ */
+function makeWebSocketConnections(numberOfConnections, ipAddress) {
 	document.getElementById("IPAddress").innerHTML = ipAddress;
 	for (i = 1; i <= numberOfConnections; i++) {
 		//TODO Build Some WebSocket Connections
@@ -25,4 +39,5 @@ function makeWebSocketConnections() {
 	}
 }
 
+/** Bootstrap main*/
 window.onload = main;
