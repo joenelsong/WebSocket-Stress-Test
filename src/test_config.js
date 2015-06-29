@@ -1,4 +1,5 @@
 var SuedeConfig = {
-  serverHost: "x.x.x.x",
-  numberOfConnections: 1000
-}
+    serverHost: "192.168.1.215",
+    hostPort: 80,
+    numberOfConnections: 1000
+};
