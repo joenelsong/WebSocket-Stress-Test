@@ -1,10 +1,25 @@
+QUnit.test( "Loading Configuration File", function( assert ) {
+	assert.expect( 2 );
+	assert.equal( 
+		typeof(SuedeConfig.numberOfConnections),
+		"number",
+		"We expect value of SuedeConfig.numberOfConnections to be of type 'Number'" 
+	);
+	assert.equal( 
+		typeof(SuedeConfig.serverHost),
+		"string",
+		"We expect value of SuedeConfig.serverHost to be of type 'String'" 
+	);
+});
+
 QUnit.test( "WebSocket Support Checker", function( assert ) {
 	assert.expect( 2 );
-	backupWebSocket = undefined;
-	if(WebSocket !== "undefined") {
+	var backupWebSocket = undefined;
+	var backupDisplayVal = document.getElementById("WebSocketSupport").innerHTML; // backup real value
+	if(WebSocket !== undefined) {
 		backupWebSocket = WebSocket; //Backup real WebSocket function if it exists
 	}
-	WebSocket = function (){;} // Fake Support for WebSockets
+	WebSocket = function (){}; // Fake Support for WebSockets
 	detectWebSockets(); // run WebSocket Support Checker
 	assert.equal( 
 		document.getElementById("WebSocketSupport").innerHTML,
@@ -18,16 +33,18 @@ QUnit.test( "WebSocket Support Checker", function( assert ) {
 		"Not Supported",
 		"We expect value to be 'Not Supported' when support disabled" 
 	);
-	if(backupWebSocket !== "undefined") {
+	if(backupWebSocket !== undefined) {
 		WebSocket = backupWebSocket;
 	}
-	detectWebSockets(); // Reset to true value
+	document.getElementById("WebSocketSupport").innerHTML = backupDisplayVal;// Reset to true value
 });
 
 QUnit.test( "WebSocket Connection Generator", function( assert ) {
 	assert.expect(2);
 	var ipAddress = "x.x.x.x";
 	var count = 2000;
+	var backupIPVal = document.getElementById("IPAddress").innerHTML;
+	var backupCountVal = document.getElementById("ConnectionCount").innerHTML;
 	makeWebSocketConnections(count, ipAddress); //make test run
 	assert.equal( 
 		document.getElementById("IPAddress").innerHTML,
@@ -40,4 +57,6 @@ QUnit.test( "WebSocket Connection Generator", function( assert ) {
 		count,
 		"Connection count was set properly to '" + count + "'" 
 	);
+	document.getElementById("IPAddress").innerHTML = backupIPVal;
+	document.getElementById("ConnectionCount").innerHTML = backupCountVal;
 });

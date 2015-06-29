@@ -1,12 +1,12 @@
 /**
  * Main Method to be called on Window load
  */
-function main() {
+function suedeMain() {
 	var support = detectWebSockets();
 	if(!support){
 		return false;
 	}
-	makeWebSocketConnections(1000, "x.x.x.x");
+	makeWebSocketConnections(SuedeConfig.numberOfConnections, SuedeConfig.serverHost);
 }
 
 /**
@@ -15,7 +15,7 @@ function main() {
  * @returns {Boolean} success of WebSocket check
  */
 function detectWebSockets() {
-	if( WebSocket !== "undefined" && typeof(WebSocket) == "function" ) {
+	if( WebSocket !== undefined && typeof(WebSocket) == "function" ) {
 		document.getElementById("WebSocketSupport").innerHTML = "Support Confirmed";
 		return true;
 	}else{
@@ -33,11 +33,11 @@ function detectWebSockets() {
  */
 function makeWebSocketConnections(numberOfConnections, ipAddress) {
 	document.getElementById("IPAddress").innerHTML = ipAddress;
-	for (i = 1; i <= numberOfConnections; i++) {
+	for (var i = 1; i <= numberOfConnections; i++) {
 		//TODO Build Some WebSocket Connections
 		//document.getElementById("ConnectionCount").innerHTML = i.toString();
 	}
 }
 
 /** Bootstrap main*/
-window.onload = main;
+window.onload = suedeMain;
