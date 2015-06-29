@@ -19,7 +19,7 @@ QUnit.test( "WebSocket Support Checker", function( assert ) {
 	if(WebSocket !== undefined) {
 		backupWebSocket = WebSocket; //Backup real WebSocket function if it exists
 	}
-	WebSocket = function (){;} // Fake Support for WebSockets
+	WebSocket = function (){}; // Fake Support for WebSockets
 	detectWebSockets(); // run WebSocket Support Checker
 	assert.equal( 
 		document.getElementById("WebSocketSupport").innerHTML,
@@ -33,7 +33,7 @@ QUnit.test( "WebSocket Support Checker", function( assert ) {
 		"Not Supported",
 		"We expect value to be 'Not Supported' when support disabled" 
 	);
-	if(backupWebSocket !== "undefined") {
+	if(backupWebSocket !== undefined) {
 		WebSocket = backupWebSocket;
 	}
 	document.getElementById("WebSocketSupport").innerHTML = backupDisplayVal;// Reset to true value

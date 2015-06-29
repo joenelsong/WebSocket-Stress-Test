@@ -33,7 +33,7 @@ function detectWebSockets() {
  */
 function makeWebSocketConnections(numberOfConnections, ipAddress) {
 	document.getElementById("IPAddress").innerHTML = ipAddress;
-	for (i = 1; i <= numberOfConnections; i++) {
+	for (var i = 1; i <= numberOfConnections; i++) {
 		//TODO Build Some WebSocket Connections
 		//document.getElementById("ConnectionCount").innerHTML = i.toString();
 	}
