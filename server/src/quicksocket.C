@@ -7,6 +7,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <openssl/sha.h>
+#include <string>
+#include <HTTPrequest.h>
+using std::string;
+
 /*
 char *base64(const unsigned char *input, int length)
 {
@@ -27,18 +31,18 @@ char *base64(const unsigned char *input, int length)
   BIO_free_all(b64);
 }*/
 
-char * generateWebSocketAcceptVal(char *clientKey){
+/*char * generateWebSocketAcceptVal(char *clientKey){
 	const char *guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 	char *tempBuffer = null;
 	char *hashResult[20];
 	char *outBuffer = null;
-	tempBuffer = malloc(strlen(inBuffer) + strlen(guid) + 1); /* make space for the new string (should check the return value ...) */
-	strcpy(tempBuffer, inBuffer); /* copy current inBuffer into the new var */
-	strcat(tempBuffer, guid); /* add the gui */
-	SHA1(tempBuffer, tempBuffer + 1, hashResult);
+	tempBuffer = malloc(strlen(inBuffer) + strlen(guid) + 1); *//* make space for the new string (should check the return value ...) */
+//	strcpy(tempBuffer, inBuffer); /* copy current inBuffer into the new var */
+//	strcat(tempBuffer, guid); /* add the gui */
+/*	SHA1(tempBuffer, tempBuffer + 1, hashResult);
 	base64(hashResult, 20, outBuffer);
 	return outBuffer
-}
+}*/
 /*
 string extractStringFromHeader(string header){
 	
@@ -101,10 +105,10 @@ int main( int argc, char *argv[] )
 	}
 
 	printf("Here is the message: %s\n",buffer);
+	HTTPrequest *request = HTTPrequest::buildRequestFromString(*(new string(buffer)));
 	//String header(buffer);
 	//char * encodedResponseCode = base64(hash, 1028);
 	/* Write a response to the client */
-	const char * encodedResponseCode = "";
 	n = write(newsockfd,
 		"HTTP/1.1 101 Switching Protocols\nUpgrade: websocket\nConnection: Upgrade\nSec-WebSocket-Accept: encodedResponseCode\nSec-WebSocket-Protocol: chat"
 		,18);
