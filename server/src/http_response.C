@@ -1,0 +1,68 @@
+#include <openssl/sha.h>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+#include <openssl/buffer.h>
+#include <http_response.h>
+#include <http_request.h>
+#include <stdlib.h>
+#include <cstring>
+#include <string>
+using std::string;
+
+static char *base64(const unsigned char *input, int length, char **buffer)
+{
+    BIO *bmem, *b64;
+    BUF_MEM *bptr;
+    b64 = BIO_new(BIO_f_base64());
+    bmem = BIO_new(BIO_s_mem());
+    b64 = BIO_push(b64, bmem);
+    BIO_write(b64, input, length);
+    BIO_flush(b64);
+    BIO_get_mem_ptr(b64, &bptr);
+    *buffer = (char *)malloc(bptr->length);
+    memcpy(*buffer, bptr->data, bptr->length);
+    (*buffer)[bptr->length] = 0;
+    BIO_free_all(b64);
+}
+
+static string generateWebSocketAcceptVal(const string& clientKey){
+	unsigned char hashResult[20];
+	char *outBuffer = NULL;
+	printf("Client Key:%s\n", clientKey.c_str());
+	string localKeyCopy(clientKey.c_str());
+	printf("Local Client Key:%s\n", localKeyCopy.c_str());
+	string guid("258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
+	printf("GUID:%s\n", guid.c_str());
+	string combined = clientKey + guid;
+	printf("Combined Key cat GUID:%s\n", combined.c_str());
+	SHA1((const unsigned char*) combined.c_str(), combined.size(), hashResult);
+	printf("Hash result:");
+    for (int i = 0; i < 20; i++)
+    {
+        printf("%02X", hashResult[i]);
+    }
+	printf("\n");
+	base64(hashResult, 20, &outBuffer);
+    printf("Base64Encoded:%s\n", outBuffer);
+	string finalString(outBuffer);
+	return finalString;
+}
+
+HTTP_Response* HTTP_Response::buildResponseToRequest(const HTTP_Request *request)
+{
+    HTTP_Response *response = new HTTP_Response();
+    string clientKey = request->getWebSocketKey();
+    string generatedKey = generateWebSocketAcceptVal(clientKey);
+    response->setResponseString("HTTP/1.1 101 Switching Protocols\nUpgrade: websocket\nConnection: Upgrade\nSec-WebSocket-Accept: "+ generatedKey +"\nSec-WebSocket-Protocol: chat");
+    return response;
+}
+
+void HTTP_Response::setResponseString(const string& testIn) //temporary
+{
+	responseString = testIn;
+}
+
+const string& HTTP_Response::toString() const
+{
+    return responseString;
+};
