@@ -25,8 +25,9 @@ void HTTP_Request::setWebSocketKey(const string& key)
  * Sec-WebSocket-Version: 13
  * Origin: http://example.com
 */
-HTTP_Request *HTTP_Request::buildRequestFromString(const string& httpString)
+HTTP_Request *HTTP_Request::buildRequestFromBuffer(unsigned const char* const data)
 {
+    string httpString((char*)data); // May not be a safe typecast since unsigned version may not have null terminator
 	HTTP_Request *request = new HTTP_Request();
 	std::istringstream stringStream(httpString);
     std::string line;    

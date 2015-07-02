@@ -18,7 +18,7 @@ private:
 public:
     const string& getWebSocketKey() const;
     void setWebSocketKey(const string&);
-    static HTTP_Request* buildRequestFromString(const string&); // Factory Method
+    static HTTP_Request* buildRequestFromBuffer(unsigned const char* const); // Factory Method
 };
 
 #endif

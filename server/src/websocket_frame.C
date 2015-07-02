@@ -3,13 +3,29 @@
 #include <string>
 using std::string;
 
-string WebSocket_Frame::getStringPayload()
+const string& WebSocket_Frame::getStringPayload()
 {
-    return "Fake Message";
+    return stringPayload;
 }
 
-/*
- * Web Socket frame as outlined in https://tools.ietf.org/html/rfc6455
+void WebSocket_Frame::setStringPayload(const string& payload)
+{
+    stringPayload = payload;
+}
+
+WebSocket_Frame::WebSocket_Frame()
+{
+    FIN = RSV1 = RSV2 = RSV3 = opcode = hasMask = isStringPayload = isBinaryPayload = false;
+	payloadLength = extendedPayloadLength = 0;
+	payloadMask = NULL;
+	string stringPayload = "";
+	binaryPayload = NULL;
+}
+
+/**
+ * This is a factory method that constructs WebSocket_Frame from a buffer
+ * It does so according to the Websocket frame specification as outlined
+ * in https://tools.ietf.org/html/rfc6455
  *
  *   0                   1                   2                   3
  *    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -29,10 +45,12 @@ string WebSocket_Frame::getStringPayload()
  *   + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
  *   |                     Payload Data continued ...                |
  *   +---------------------------------------------------------------+
+ * @param data binary
  */
-WebSocket_Frame* WebSocket_Frame::buildFrameFromString ( const string& data ) {
+WebSocket_Frame* WebSocket_Frame::buildFrameFromBuffer(unsigned const char* const data ) {
+    // be sure that we dont make unsafe typecast of unsigned into string
     WebSocket_Frame* frame = new WebSocket_Frame();
-
+    frame->setStringPayload("Fake Message");
     // TODO : Setup the frame, parse out fields and unmask the payload data
     return frame;
 }

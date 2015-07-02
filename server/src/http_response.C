@@ -9,23 +9,25 @@
 #include <string>
 using std::string;
 
+//Sort of based on solution from stack overflow, may need rewrite as it seems to have memory leak in valgrind
 static char *base64(const unsigned char *input, int length, char **buffer)
 {
     BIO *bmem, *b64;
     BUF_MEM *bptr;
-    b64 = BIO_new(BIO_f_base64());
+    b64 = BIO_new(BIO_f_base64());//This seems to be the source of some memory leaks that need to be resolved
     bmem = BIO_new(BIO_s_mem());
     b64 = BIO_push(b64, bmem);
     BIO_write(b64, input, length);
     BIO_flush(b64);
     BIO_get_mem_ptr(b64, &bptr);
-    *buffer = (char *)malloc(bptr->length);
+    *buffer = new char[bptr->length + 1];
     memcpy(*buffer, bptr->data, bptr->length);
     (*buffer)[bptr->length] = 0;
-    BIO_free_all(b64);
+    BIO_free_all(b64); // This should stop the memory leak
 }
 
-static string generateWebSocketAcceptVal(const string& clientKey){
+static string generateWebSocketAcceptVal(const string& clientKey)
+{
 	unsigned char hashResult[20];
 	char *outBuffer = NULL;
 	printf("Client Key:%s\n", clientKey.c_str());
@@ -45,6 +47,7 @@ static string generateWebSocketAcceptVal(const string& clientKey){
 	base64(hashResult, 20, &outBuffer);
     printf("Base64Encoded:%s\n", outBuffer);
 	string finalString(outBuffer);
+	delete[] outBuffer;
 	return finalString;
 }
 
@@ -65,4 +68,4 @@ void HTTP_Response::setResponseString(const string& testIn) //temporary
 const string& HTTP_Response::toString() const
 {
     return responseString;
-};
+}

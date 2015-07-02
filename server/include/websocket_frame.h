@@ -11,16 +11,19 @@ private:
 	bool RSV2;
 	bool RSV3;
 	bool opcode;
-	bool mask;
-	int payloadLen;
-	int extendedPayloadLen;
-	string webSocketKey;
-	unsigned char *webSocketProtocol;
-	unsigned char *webSocketVersion;
-	unsigned char *origin;
+	bool hasMask;
+	bool isStringPayload;
+	bool isBinaryPayload;
+	int payloadLength;
+	int extendedPayloadLength;
+	unsigned char* payloadMask;
+	string stringPayload;
+	unsigned char* binaryPayload;
 public:
-    string getStringPayload();
-	static WebSocket_Frame* buildFrameFromString(const string&); // Factory Method
+    WebSocket_Frame();
+    const string& getStringPayload();
+    void setStringPayload(const string&);
+	static WebSocket_Frame* buildFrameFromBuffer(unsigned const char* const); // Factory Method
 };
 
 #endif

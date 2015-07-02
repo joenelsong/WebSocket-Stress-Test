@@ -16,8 +16,9 @@ using std::string;
 
 void TCP_Listener::startListening()
 {
+    /* Start of online example */
     int sockfd, newsockfd, portno, clilen;
-	char buffer[1028];
+	unsigned char buffer[1028];
 	struct sockaddr_in serv_addr, cli_addr;
 	int  n;
 
@@ -70,20 +71,18 @@ void TCP_Listener::startListening()
 		exit(1);
 	}
 
+	/* End of online example */
+
 	printf("Here is the message: %s\n",buffer);
 
-	HTTP_Request *request = HTTP_Request::buildRequestFromString(*(new string(buffer)));
+	HTTP_Request *request = HTTP_Request::buildRequestFromBuffer(buffer);
 
 	printf("Websocket Key:%s\n", request->getWebSocketKey().c_str() );
 
 	HTTP_Response *response = HTTP_Response::buildResponseToRequest(request);
-	//string generatedKey = generateWebSocketAcceptVal(request->getWebSocketKey());
 
-	//printf("Generated Websocket Key:%s\n", generatedKey.c_str() );
 	string responseString = response->toString();
-	n = write(newsockfd,
-		responseString.c_str(),
-		responseString.size());
+	n = write(newsockfd, responseString.c_str(), responseString.size());
 
 	if (n < 0)
 	{
@@ -107,16 +106,15 @@ void TCP_Listener::startListening()
         }
         printf("\n");*/
 
-	WebSocket_Frame* frame = WebSocket_Frame::buildFrameFromString(*(new string(buffer)));
+	WebSocket_Frame* frame = WebSocket_Frame::buildFrameFromBuffer(buffer);
 
 	printf("Here is the message 2: %s\n",frame->getStringPayload().c_str());
+	delete request;
+	delete response;
+	delete frame;
 }
 
 TCP_Listener::TCP_Listener()
 {
-    FIN = false;
-    RSV1 = false;
-    RSV2 = false;
-    RSV3 = false;
     startListening();
 }
