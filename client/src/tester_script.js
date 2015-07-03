@@ -68,7 +68,7 @@ function runOneEchoTest(ipAddress, portNumber) {
  */
 function makeWebSocketConnections(numberOfConnections, ipAddress, portNumber) {
 	document.getElementById("IPAddress").innerHTML = ipAddress;
-    document.getElementById("PortNumber").innerHTML = portNumber;
+    document.getElementById("PortNumber").innerHTML = portNumber.toString();
     var messageText = "Echo String";
     var connectionString = "ws://" + ipAddress + ":" + portNumber + "/";
     var socketArray = [];
