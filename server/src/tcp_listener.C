@@ -114,6 +114,9 @@ void TCP_Listener::startListening()
 	delete frame;
 }
 
+/**
+ * Default constructor for TCP_Listener, starts listening
+ */
 TCP_Listener::TCP_Listener()
 {
     startListening();

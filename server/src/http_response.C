@@ -51,21 +51,35 @@ static string generateWebSocketAcceptVal(const string& clientKey)
 	return finalString;
 }
 
+/**
+ * This is a factory method that constructs HTTP_Response a 
+ * provided HTTP_Request request.
+ * @param request pointer to HTTP_Request for which the response is created for
+ * @return response A HTTP_Response constructed from the binary buffer contents
+ */
 HTTP_Response* HTTP_Response::buildResponseToRequest(const HTTP_Request *request)
 {
     HTTP_Response *response = new HTTP_Response();
     string clientKey = request->getWebSocketKey();
     string generatedKey = generateWebSocketAcceptVal(clientKey);
-    response->setResponseString("HTTP/1.1 101 Switching Protocols\nUpgrade: websocket\nConnection: Upgrade\nSec-WebSocket-Accept: "+ generatedKey +"\nSec-WebSocket-Protocol: chat");
+	//TODO: don't use setResponseString, build a real HTTP_Response object that can be used for other things
+    response->setResponseString("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+ generatedKey +"\r\nSec-WebSocket-Protocol: chat\r\n\r\n");
     return response;
 }
 
+//temporary for emulating toString construction
 void HTTP_Response::setResponseString(const string& testIn) //temporary
 {
 	responseString = testIn;
 }
 
+/**
+ * toString Method generates text http response.
+ * @return responseString String that is a text version of the http request, 
+ * fully prepared for transmission
+ */
 const string& HTTP_Response::toString() const
 {
+	//TODO: make this a proper string construction
     return responseString;
 }

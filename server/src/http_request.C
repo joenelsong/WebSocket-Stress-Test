@@ -4,17 +4,31 @@
 #include <sstream>
 using std::string;
 
+/**
+ * Getter for webSocketKey
+ * @return webSocketKey String webSocketKey member data
+ */
 const string& HTTP_Request::getWebSocketKey() const
 {
 	return webSocketKey;
 }
-	
+
+/**
+ * Setter for webSocketKey
+ * @param key string object that will be set as webSocketKey
+ * @return void
+ */
 void HTTP_Request::setWebSocketKey(const string& key)
 {
 	webSocketKey = key;
 }
 
-/*
+/**
+ * This is a factory method that constructs HTTP_Request from a buffer
+ * @param data A binary buffer that contains the raw HTTP Request
+ * data directly from the network
+ * @return request A HTTP_Request constructed from the binary buffer contents
+ 
  * Factory method that constructs HTTPrequest from following string format:
  * GET /chat HTTP/1.1
  * Host: server.example.com
