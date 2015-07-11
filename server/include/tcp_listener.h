@@ -6,7 +6,10 @@ using std::string;
 class TCP_Listener
 {
 private:
-	void startListening();
+	void listenForTCPConnections();
+	void listenToConnectedSocket(int);
+	void listenForWebSocketFrames(int);
+	void performHTTPHandshake(int);
 public:
     TCP_Listener();
 };
