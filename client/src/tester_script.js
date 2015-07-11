@@ -40,6 +40,8 @@ function detectWebSockets() {
  * @returns {Boolean} success of WebSocket connection
  */
 function runOneEchoTest(ipAddress, portNumber) {
+    document.getElementById("IPAddress").innerHTML = ipAddress;
+    document.getElementById("PortNumber").innerHTML = portNumber.toString();
     var messageText = "Echo String";
     var connectionString = "ws://" + ipAddress + ":" + portNumber + "/echo";
     var socket = new WebSocket(connectionString);
@@ -49,10 +51,10 @@ function runOneEchoTest(ipAddress, portNumber) {
         socket.send(messageText);
     };
     socket.onmessage = function(msg) {
-        if (msg == messageText) {
+        if (msg.data == messageText) {
             document.getElementById("EchoResult").innerHTML = "Success";
         } else {
-            document.getElementById("EchoResult").innerHTML = "Failed";
+            document.getElementById("EchoResult").innerHTML = "Failed Message Received: \"" + msg.data + "\", should be: \"" + messageText + "\"";
         }
         socket.close();
     }
@@ -67,7 +69,7 @@ function runOneEchoTest(ipAddress, portNumber) {
  * @returns {Boolean} success of WebSocket connection
  */
 function makeWebSocketConnections(numberOfConnections, ipAddress, portNumber) {
-	document.getElementById("IPAddress").innerHTML = ipAddress;
+    document.getElementById("IPAddress").innerHTML = ipAddress;
     document.getElementById("PortNumber").innerHTML = portNumber.toString();
     var messageText = "Echo String";
     var connectionString = "ws://" + ipAddress + ":" + portNumber + "/";
