@@ -73,16 +73,19 @@ void TCP_Listener::startListening()
 
 	/* End of online example */
 
-	printf("Here is the message: %s\n",buffer);
+	printf("incoming HTTP message:\n%s\n",buffer);
 
 	HTTP_Request *request = HTTP_Request::buildRequestFromBuffer(buffer);
 
-	printf("Websocket Key:%s\n", request->getWebSocketKey().c_str() );
+//	printf("Websocket Key:%s\n", request->getWebSocketKey().c_str() );
 
 	HTTP_Response *response = HTTP_Response::buildResponseToRequest(request);
 
 	string responseString = response->toString();
 	n = write(newsockfd, responseString.c_str(), responseString.size());
+
+	printf("HTTP Response:\n%s\n", responseString.c_str() );
+
 
 	if (n < 0)
 	{
@@ -100,15 +103,46 @@ void TCP_Listener::startListening()
 	}
 
 	/*printf("Frame Bytes result:");
-        for (int i = 0; i < 1024; i++)
+        for (int i = 0; i < 512; i++)
         {
             printf(" %02X ", buffer[i]);
         }
         printf("\n");*/
 
+    bool hasMask = (bool) (buffer[1] & 0x80);
+    if(hasMask){
+        printf("frame payload uses mask\n");
+    }
+
+    int payloadLength = (int) (buffer[1] & 0x7F);
+    //int payloadLength = (int) (buffer[1]);
+    printf("frame payload uses has byte length of %d\n", payloadLength);
+
+    char payloadText[payloadLength + 1];
+    for(int i = 0; i < payloadLength; i++){
+        payloadText[i] = buffer[6 + i] ^ buffer[ i % 4 + 2];
+    }
+
 	WebSocket_Frame* frame = WebSocket_Frame::buildFrameFromBuffer(buffer);
 
-	printf("Here is the message 2: %s\n",frame->getStringPayload().c_str());
+	printf("Here is the WebSocket message:\n%s\n", payloadText);
+
+	unsigned char webSocketResponse[payloadLength + 2];
+	webSocketResponse[0] = 0x81;
+    webSocketResponse[1] = payloadLength;
+    for(int i = 0; i < payloadLength; i++){
+        webSocketResponse[i + 2] = payloadText[i];
+    }
+
+    n = write(newsockfd, webSocketResponse, payloadLength + 2);
+    printf("Websocket echo sent.\n");
+
+	if (n < 0)
+	{
+		perror("ERROR writing to socket");
+		exit(1);
+	}
+
 	delete request;
 	delete response;
 	delete frame;
