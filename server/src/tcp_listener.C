@@ -2,6 +2,7 @@
 #include <http_request.h>
 #include <http_response.h>
 #include <websocket_frame.h>
+#include <socket_connection.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -33,7 +34,7 @@ void userInputListener(string& userInput, int& sockfd)
     }
 }
 
-void TCP_Listener::performHTTPHandshake(int socketfd)
+void performHTTPHandshake(int socketfd)
 {
     unsigned char buffer[1028];
     bzero(buffer,1028);
@@ -65,7 +66,7 @@ void TCP_Listener::performHTTPHandshake(int socketfd)
     delete response;
 }
 
-void TCP_Listener::listenForWebSocketFrames(int socketfd)
+void listenForWebSocketFrames(int socketfd)
 {
     unsigned char buffer[1028];
     bzero(buffer,1024);
@@ -120,7 +121,7 @@ void TCP_Listener::listenForWebSocketFrames(int socketfd)
     //delete frame;
 }
 
-void TCP_Listener::listenToConnectedSocket(int socketfd)
+void listenToConnectedSocket(int socketfd)
 {
     performHTTPHandshake(socketfd);
     listenForWebSocketFrames(socketfd);
@@ -167,12 +168,14 @@ void TCP_Listener::listenForTCPConnections()
             exit(1);
         } else if(userInput == "exit")
         {
-        inputListenThread.join();
             std::cout << "Closing Listeners" << std::endl;
+            inputListenThread.join();
             return;
         }
         printf("Connection established to: %s\n", inet_ntoa(cli_addr.sin_addr));
-        listenToConnectedSocket(newsockfd);
+        std::thread* establishedConnectionThread = new std::thread(listenToConnectedSocket, newsockfd);
+        connectedThreads.push_back(establishedConnectionThread);
+        //listenToConnectedSocket(newsockfd);
     }
 }
 
