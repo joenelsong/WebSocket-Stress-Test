@@ -11,7 +11,27 @@
 #include <stdlib.h>
 #include <cstring>
 #include <string>
+
+#include <thread>
+#include <iostream>
+#include <arpa/inet.h>
 using std::string;
+
+void userInputListener(string& userInput, int& sockfd)
+{
+    while(true){
+        string input;
+        std::cin >> input;
+        if (input == "exit"){
+            std::cout << "exit command received" << std::endl;
+            userInput = "exit";
+            shutdown(sockfd, 2);
+            return;
+        }else {
+            std::cout << "Not a valid command" << std::endl;
+        }
+    }
+}
 
 void TCP_Listener::performHTTPHandshake(int socketfd)
 {
@@ -110,6 +130,7 @@ void TCP_Listener::listenForTCPConnections()
 {
     int sockfd, newsockfd, portno, clilen;
     struct sockaddr_in serv_addr, cli_addr;
+    string userInput = "";
 
     portno = 80;
 
@@ -132,19 +153,25 @@ void TCP_Listener::listenForTCPConnections()
         perror("ERROR on binding");
         exit(1);
     }
-    while(true){
-
+    std::thread inputListenThread(userInputListener, std::ref(userInput), std::ref(sockfd));
+    while(userInput != "exit"){//userInput controlled by inputListenThread
         printf("Waiting for message from client...\n");
 
         listen(sockfd,5);
         clilen = sizeof(cli_addr);
 
         newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, (socklen_t *) &clilen);
-        if (newsockfd < 0)
+        if (newsockfd < 0 && userInput != "exit")
         {
-            perror("ERROR on accept");
+            std::cerr << "ERROR on accept" << std::endl;
             exit(1);
+        } else if(userInput == "exit")
+        {
+        inputListenThread.join();
+            std::cout << "Closing Listeners" << std::endl;
+            return;
         }
+        printf("Connection established to: %s\n", inet_ntoa(cli_addr.sin_addr));
         listenToConnectedSocket(newsockfd);
     }
 }
