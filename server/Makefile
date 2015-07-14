@@ -9,13 +9,13 @@ SOURCES = $(FILES:%.cpp=$(SOURCE_PATH)/%.cpp)
 OBJ=$(FILES:%.C=$(BUILD_PATH)/%.o)
 
 all: folders $(OBJ)
-	g++ -o $(BIN_PATH)/$(APPLICATION_NAME) -I./$(INCLUDE_PATH) $(OBJ) -L/usr/lib -lssl -lcrypto
+	g++ -std=c++11 -o $(BIN_PATH)/$(APPLICATION_NAME) -I./$(INCLUDE_PATH) $(OBJ) -L/usr/lib -lssl -lcrypto -pthread
 
 $(BUILD_PATH)/%.o : $(SOURCE_PATH)/%.C
-	g++ -o $@ -g -I./$(INCLUDE_PATH) -c $< -L/usr/lib -lssl -lcrypto
+	g++ -std=c++11 -o $@ -g -I./$(INCLUDE_PATH) -c $< -L/usr/lib -lssl -lcrypto -pthread
 
 debug: folders $(OBJ)
-	g++ -g -DDEBUG_MODE -o $(BIN_PATH)/$(APPLICATION_NAME) -I./$(INCLUDE_PATH) $(OBJ) -L/usr/lib -lssl -lcrypto
+	g++ -std=c++11 -g -DDEBUG_MODE -o $(BIN_PATH)/$(APPLICATION_NAME) -I./$(INCLUDE_PATH) $(OBJ) -L/usr/lib -lssl -lcrypto -pthread
 
 run: all
 	$(BIN_PATH)/$(APPLICATION_NAME)

@@ -20,9 +20,9 @@ static char *base64(const unsigned char *input, int length, char **buffer)
     BIO_write(b64, input, length);
     BIO_flush(b64);
     BIO_get_mem_ptr(b64, &bptr);
-    *buffer = new char[bptr->length + 1];
+    *buffer = new char[bptr->length];
     memcpy(*buffer, bptr->data, bptr->length);
-    (*buffer)[bptr->length] = 0;
+    (*buffer)[bptr->length - 1] = 0;
     BIO_free_all(b64); // This should stop the memory leak
 }
 
@@ -30,22 +30,22 @@ static string generateWebSocketAcceptVal(const string& clientKey)
 {
 	unsigned char hashResult[20];
 	char *outBuffer = NULL;
-	printf("Client Key:%s\n", clientKey.c_str());
+//	printf("Client Key:%s\n", clientKey.c_str());
 	string localKeyCopy(clientKey.c_str());
-	printf("Local Client Key:%s\n", localKeyCopy.c_str());
+//	printf("Local Client Key:%s\n", localKeyCopy.c_str());
 	string guid("258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
-	printf("GUID:%s\n", guid.c_str());
+//	printf("GUID:%s\n", guid.c_str());
 	string combined = clientKey + guid;
-	printf("Combined Key cat GUID:%s\n", combined.c_str());
+//	printf("Combined Key cat GUID:%s\n", combined.c_str());
 	SHA1((const unsigned char*) combined.c_str(), combined.size(), hashResult);
-	printf("Hash result:");
+/*	printf("Hash result:");
     for (int i = 0; i < 20; i++)
     {
         printf("%02X", hashResult[i]);
     }
-	printf("\n");
+	printf("\n");*/
 	base64(hashResult, 20, &outBuffer);
-    printf("Base64Encoded:%s\n", outBuffer);
+ //   printf("Base64Encoded:%s\n", outBuffer);
 	string finalString(outBuffer);
 	delete[] outBuffer;
 	return finalString;
@@ -63,7 +63,8 @@ HTTP_Response* HTTP_Response::buildResponseToRequest(const HTTP_Request *request
     string clientKey = request->getWebSocketKey();
     string generatedKey = generateWebSocketAcceptVal(clientKey);
 	//TODO: don't use setResponseString, build a real HTTP_Response object that can be used for other things
-    response->setResponseString("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+ generatedKey +"\r\nSec-WebSocket-Protocol: chat\r\n\r\n");
+    //response->setResponseString("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+ generatedKey +"\r\nSec-WebSocket-Protocol: chat\r\n\r\n");
+    response->setResponseString("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+ generatedKey +"\r\n\r\n");
     return response;
 }
 
