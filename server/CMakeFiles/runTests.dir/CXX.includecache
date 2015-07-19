@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/quixoticjoe/server/http_response.cc
+include/http_response.h
+/home/quixoticjoe/server/include/http_response.h
+gtest/gtest.h
+-
+
+/home/quixoticjoe/server/include/http_response.h
+http_request.h
+-
+string
+-
+
+include/http_request.h
+string
+-
+
