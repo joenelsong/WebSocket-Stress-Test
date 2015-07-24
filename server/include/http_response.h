@@ -22,6 +22,7 @@ public:
 	void setResponseString(const string&); // temporary
 	static HTTP_Response* buildResponseToRequest(const HTTP_Request *); // Factory Method
 	char* base64(const unsigned char *input, int length, char **buffer);
+	static string generateWebSocketAcceptVal(const string& clientKey);
 };
 
 #endif

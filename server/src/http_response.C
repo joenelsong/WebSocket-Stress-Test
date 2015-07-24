@@ -10,7 +10,7 @@
 using std::string;
 
 //Sort of based on solution from stack overflow, may need rewrite as it seems to have memory leak in valgrind
-static char *base64(const unsigned char *input, int length, char **buffer)
+static char* HTTP_Response::base64(const unsigned char *input, int length, char **buffer)
 {
     BIO *bmem, *b64;
     BUF_MEM *bptr;
@@ -26,7 +26,7 @@ static char *base64(const unsigned char *input, int length, char **buffer)
     BIO_free_all(b64); // This should stop the memory leak
 }
 
-static string generateWebSocketAcceptVal(const string& clientKey)
+static string HTTP_Response::generateWebSocketAcceptVal(const string& clientKey)
 {
 	unsigned char hashResult[20];
 	char *outBuffer = NULL;
