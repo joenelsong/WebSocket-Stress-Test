@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../../include/http_request.h
+string
+-
+
+../../include/http_response.h
+http_request.h
+-
+string
+-
+
+/home/quixoticjoe/WebSocket-Stress-Test/server/test/http_response/http_response_test.cpp
+http_response.h
+-
+gtest/gtest.h
+-
+
